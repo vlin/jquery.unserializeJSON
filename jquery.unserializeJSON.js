@@ -5,6 +5,9 @@
       var el = that.find('[name=' + key + ']');
       if (el.length > 0) {
         if(el.is('select') && el.prop('multiple')) {
+          //reset all options
+          el.find('option').prop('selected', !1);
+
           $.each(val, function (i, v) {
             el.find('option[value=' + v + ']')
               .prop('selected', !0);
