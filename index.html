@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title>$.fn.unserializeJSON</title>
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, maximum-scale=1.0">
+    <meta name="author" content="Victor Lin">
+    <link href="http://twitter.github.io/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+    <style>
+      html, body {
+        text-align: center;
+      }
+      #wrapper {
+        margin: 0 auto;
+        text-align: left;
+        width: 960px;
+      }
+      code {
+        font-family:"Lucida Console", "Monaco", monospace;
+      }
+      #jsonText, pre {
+        color: #fff;
+        font-size: 13px;
+        background: #000;
+        padding: 10px;
+        line-height: 18px;
+        -moz-border-radius: 5px;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        word-wrap: break-word;
+        margin-bottom: 15px;
+      }
+      code span {
+        -moz-transition: color .8s ease-in;
+        -o-transition: color .8s ease-in;
+        -webkit-transition: color .8s ease-in;
+        transition: color .8s ease-in;
+      }
+      .red {
+        color: #f50419;
+      }
+      .orange {
+        color: #f57900;
+      }
+      .yellow {
+        color: #f5e600;
+      }
+      .green {
+        color: #00f50c;
+      }
+      .blue {
+        color: #0081f5;
+      }
+      .javascript .comment {
+        color: #535353;
+      }
+      .meta, .entity {
+        color: #f03200;
+      }
+      .support {
+        color: #006dcf;
+      }
+      .string {
+        color: #00f50c;
+      }
+      .string.regexp {
+        color: #fff;
+      }
+      .integer, .constant {
+        color: #d8fa3c;
+      }
+      .keyword, .selector, .storage {
+        color: #fbde2d;
+      }
+      .constant.regex.escape {
+        color: #d8fa3c;
+      }
+    </style>
+    <!--[if lt IE 9]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <div id="wrapper">
+      <header>
+         <h1><a href="#">$.fn.unserializeJSON</a></h1>
+
+      </header>
+      <article class="wrapper">
+         <h3>What is this?</h3>
+
+        <p>$.fn.unserializeJSON can unserialize data back into form's element.</p>
+        <div class="row-fluid">
+          <div class="span7">
+            <textarea id="jsonText" style="height:440px;width:95%;">
+{
+  "email": "myname@gmail.com",
+  "password": "mypassword",
+  "numbers": ["2", "3"],
+  "option": "option2",
+  "select": "2",
+  "multipleSelect": ["1", "2"],
+  "remark": "blah blah"
+}
+            </textarea>
+          </div>
+          <div class="span2" style="margin-top:200px;">
+            <button id="convert" type="button" class="btn">unserialize JSON to Form</button>
+          </div>
+          <div class="span3">
+            <form id="myForm">
+              <div class="control-group">
+                <label class="control-label" for="inputEmail">Email</label>
+                <div class="controls">
+                  <input type="text" id="inputEmail" placeholder="Email" name="email" value="">
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="inputPassword">Password</label>
+                <div class="controls">
+                  <input type="password" id="inputPassword" placeholder="Password" name="password" value="">
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="inputPassword">Numbers</label>
+                <label class="checkbox inline">
+                  <input type="checkbox" id="inlineCheckbox1" name="numbers" value="1">1</label>
+                <label class="checkbox inline">
+                  <input type="checkbox" id="inlineCheckbox2" name="numbers" value="2">2</label>
+                <label class="checkbox inline">
+                  <input type="checkbox" id="inlineCheckbox3" name="numbers" value="3">3</label>
+              </div>
+              <div class="control-group">
+                <label class="control-label">Option</label>
+                <label class="radio inline">
+                  <input type="radio" name="option" id="optionsRadios1" value="option1">1</label>
+                <label class="radio inline">
+                  <input type="radio" name="option" id="optionsRadios2" value="option2">2</label>
+              </div>
+              <select name="select">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <br>
+              <select name="multipleSelect" multiple="multiple">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <br>
+              <textarea name="remark" rows="3" placeholder="Remark"></textarea>
+            </form>
+          </div>
+        </div>
+        <a id="toggleSource" href="javascript:;">source code</a>
+        <pre id="sourceCode" style="display:none;">
+          <code data-language="javascript">
+;(function ($) {
+  $.fn.unserializeJSON = function (json) {
+    var that = this;
+    $.each(json, function (key, val) {
+      var el = that.find('[name=' + key + ']');
+      if (el.length > 0) {
+        if(el.is('select') && el.prop('multiple')) {
+          //reset all options
+          el.find('option').prop('selected', !1);
+
+          $.each(val, function (i, v) {
+            el.find('option[value=' + v + ']')
+              .prop('selected', !0);
+          });
+        } else if (el.is(':radio')){
+            el.filter('[value=' + val + ']')
+              .prop('checked', !0);
+        } else {
+            el.val(val);
+        }
+      }
+    });
+  };
+})(jQuery);
+          </code>
+        </pre>
+      </article>
+      <footer>
+        <hr>
+      </footer>
+    </div>
+    <script src="http://cdn.craig.is/js/rainbow/rainbow.min.js"></script>
+    <script src="http://cdn.craig.is/js/rainbow/language/generic.js"></script>
+    <script src="http://cdn.craig.is/js/rainbow/language/javascript.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <!--[if lte IE 7]>
+    <script src="http://cdn.jsdelivr.net/json2/0.1/json2.min.js"></script>
+    <![endif]-->
+    <script>
+      ;(function ($) {
+        $.fn.unserializeJSON = function (json) {
+          var that = this;
+          $.each(json, function (key, val) {
+            var el = that.find('[name=' + key + ']');
+            if (el.length > 0) {
+              if(el.is('select') && el.prop('multiple')) {
+                //reset all options
+                el.find('option').prop('selected', !1);
+
+                $.each(val, function (i, v) {
+                  el.find('option[value=' + v + ']')
+                    .prop('selected', !0);
+                });
+              } else if (el.is(':radio')){
+                  el.filter('[value=' + val + ']')
+                    .prop('checked', !0);
+              } else {
+                  el.val(val);
+              }
+            }
+          });
+        };
+      })(jQuery);
+      $(function () {
+        $('#toggleSource').click(function () {
+            $('#sourceCode').slideToggle();
+        });
+        $('#convert').click(function () {
+            $('#myForm').unserializeJSON(JSON.parse($('#jsonText').val()));
+        });
+        $('#jsonText').focus();
+      });
+    </script>
+  </body>
+
+</html>
